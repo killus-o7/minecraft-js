@@ -27,7 +27,7 @@ document.body.appendChild( stats.dom );
 
 // Orbit controls
 const controls = new OrbitControls( camera, renderer.domElement );
-controls.target.set( 0, 0, 0 );
+controls.target.set( 1.5, 0, 1.5 );
 controls.update();
 controls.enablePan = false;
 controls.enableDamping = true;

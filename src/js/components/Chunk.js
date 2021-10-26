@@ -10,11 +10,11 @@ class Chunk {
         this.height = height
         this.blocks = new Uint8Array(width << height)
         this.group = new Group()
+        scene.add(this.group)
     }
 
     getIndex(x, y, z){
-        let r = [0, 3]
-        return (this.inChunk(...r, [x,y,z])) ? z+y*4+x*16 : null
+        return (this.inChunk(x,y,z)) ? z+y*4+x*16 : null
     }
 
     getPosition(idx){
@@ -33,10 +33,10 @@ class Chunk {
         return [x, y, z]
     }
 
-    inChunk(pos){
+    inChunk(...pos){
         let b = true
         for (let x of pos){
-            b = b & ( x>=start && x<=end )
+            b = b & ( x>=0 && x<=3 )
         } 
         return b
     }
@@ -45,38 +45,65 @@ class Chunk {
         let faces = [],
             ox, oy, oz
 
+        console.group(`Checking faces for: ${x} ${y} ${z}`)
         for (let [i, v] of face_offsets.entries()){
             ox = x + v[0]
             oy = y + v[1]
             oz = z + v[2]
-            //console.log(v, ox, oy, oz)
 
             let blockIndex = this.getIndex(ox, oy, oz)
-            //console.log(blockIndex)
+            console.log(`index of block at ${ox} ${oy} ${oz}: ${blockIndex}`)
 
-            //if (this.blocks[blockIndex] == 0) faces.push(i)
-            //else if (this.outOfChunk(0, 3, [ox, oy, oz])) faces.push(i)
+            if (blockIndex){
+                if (!this.blocks[blockIndex]) faces.push(i)
+                //else if (this.outOfChunk(ox, oy, oz)) faces.push(i)
+            }
+            
         }
+        console.groupEnd()
         
         return faces
     }
 
-    setBlock(x, y, z, id){
+    setBlock(x, y, z, block_id){
+        let index = this.getIndex(x, y, z),
+            ox, oy, oz
+
+        this.blocks[index] = block_id
+        this.createMesh(x,y,z)
+
+        console.group(`Checking blocks around: ${x} ${y} ${z}:`)
+        for (let offsets of face_offsets){
+            ox = x + offsets[0]
+            oy = y + offsets[1]
+            oz = z + offsets[2]
+
+            let blockIndex = this.getIndex(ox, oy, oz)
+            if (!blockIndex) continue
+
+            console.log(this.blocks[blockIndex])
+            if (!this.blocks[blockIndex]) this.updateMesh(ox,oy,oz)
+        }
+        console.groupEnd()
+    }
+
+    createMesh(x, y, z){
         let index = this.getIndex(x,y,z)
-        this.blocks[index] = id
-        this.createMesh(x,y,z, index)
+
+        let material = new MeshNormalMaterial({ wireframe: true }),
+            mesh = new Mesh(new Cube(this.getFaces(x,y,z)), material)
+
+        mesh.position.set(x,y,z)
+        mesh.name = `${index}`
+        this.group.add(mesh)
     }
 
-    createMesh(x, y, z, i){
-        const material = new MeshNormalMaterial({ wireframe: true })
-        let mesh = new Mesh(new Cube(this.getFaces(x,y,z)), material)
-        mesh.position.set(x, y, z)
-        mesh.name = toString(i)
-        scene.add(mesh)
-    }
+    updateMesh(x, y, z){
+        let index = this.getIndex(x,y,z)
+        let mesh = this.group.getObjectByName(`${index}`)
 
-    renderChunk() {
-        scene.add(this.group)
+        mesh.geometry = new Cube(this.getFaces(x,y,z))
+        mesh.updateMatrix()
     }
 }
 

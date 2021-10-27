@@ -79,10 +79,11 @@ class Chunk {
             oz = z + offsets[2]
 
             let blockIndex = this.getIndex(ox, oy, oz)
-            if (!blockIndex) continue
+            if (blockIndex == null) continue
+            if (this.blocks[blockIndex] == 0) continue
 
             console.log(this.blocks[blockIndex])
-            if (!this.blocks[blockIndex]) this.updateMesh(ox,oy,oz)
+            this.updateMesh(ox,oy,oz)
         }
         console.groupEnd()
     }
@@ -90,7 +91,10 @@ class Chunk {
     createMesh(x, y, z){
         let index = this.getIndex(x,y,z)
 
-        let material = new MeshNormalMaterial({ wireframe: true }),
+        let option = {}
+        //option = { wireframe: true }
+
+        let material = new MeshNormalMaterial(option),
             mesh = new Mesh(new Cube(this.getFaces(x,y,z)), material)
 
         mesh.position.set(x,y,z)

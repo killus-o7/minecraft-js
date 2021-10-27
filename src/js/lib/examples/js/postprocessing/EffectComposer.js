@@ -1,3 +1,5 @@
+import * as THREE from "../../../build/three.module.js"
+
 ( function () {
 
 	class EffectComposer {

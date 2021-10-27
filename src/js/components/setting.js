@@ -1,7 +1,10 @@
 import * as THREE from "../lib/build/three.module.js";
 import { OrbitControls } from "../lib/examples/jsm/controls/OrbitControls.js";
-import { OutlineEffect } from "../lib/examples/jsm/effects/OutlineEffect.js";
 import Stats from '../lib/examples/jsm/libs/stats.module.js';
+
+//import { EffectComposer } from '../lib/examples/jsm/postprocessing/EffectComposer.js';
+//import { OutlinePass } from '../lib/examples/jsm/postprocessing/OutlinePass.js';
+
 
 // Perspective camera
 const aspect = window.innerWidth / window.innerHeight;
@@ -21,6 +24,11 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+/* // Effects
+const composer = new EffectComposer( renderer );
+composer.addPass( new OutlinePass())
+*/
+
 // Stats
 const stats = new Stats();
 document.body.appendChild( stats.dom );
@@ -32,13 +40,11 @@ controls.update();
 controls.enablePan = false;
 controls.enableDamping = true;
 
-const effect = new OutlineEffect( renderer );
-
 function animate() {
 	requestAnimationFrame( animate );
 	controls.update();
 	stats.update();
-	effect.render( scene, camera );
+	renderer.render( scene, camera );
 }
 
-export { camera, scene, renderer, stats, controls , effect, animate};
+export { camera, scene, renderer, stats, controls, animate};

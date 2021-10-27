@@ -10,16 +10,16 @@ import { scene, animate } from "./components/setting.js";
 const loader = new THREE.TextureLoader();
 
 // Grid 
-const size = 4;
+const size = 16;
 const grid = new THREE.GridHelper( size, size );
-grid.position.set(1.5, -1, 1.5)
+grid.position.set(7.5, -1, 7.5)
 scene.add( grid );
 
 // Chunks (test)
-let chunk = new Chunk(4, 4)
+let chunk = new Chunk()
 
-for (let x=0; x<4; x++){
-    for (let z=0; z<4; z++){
+for (let x=0; x<16; x++){
+    for (let z=0; z<16; z++){
         chunk.setBlock(x,0,z, Blocks.stone)
     }
 }

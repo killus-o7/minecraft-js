@@ -14,7 +14,7 @@ const camera = new THREE.PerspectiveCamera(
 	1, // near plane
 	100 // far plane
 );
-camera.position.set(10, 10, 10);
+camera.position.set(24, 24, 24);
 
 // Scene
 const scene = new THREE.Scene();
@@ -35,7 +35,7 @@ document.body.appendChild( stats.dom );
 
 // Orbit controls
 const controls = new OrbitControls( camera, renderer.domElement );
-controls.target.set( 1.5, 0, 1.5 );
+controls.target.set( 7.5, 0, 7.5 );
 controls.update();
 controls.enablePan = false;
 controls.enableDamping = true;

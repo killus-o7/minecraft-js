@@ -5,38 +5,38 @@ import { face_offsets } from "./blocks/cube_consts.js";
 import { scene } from "./setting.js";
 
 class Chunk {
-    constructor(width = 4, height = 4){
-        this.width = width
-        this.height = height
-        this.blocks = new Uint8Array(width << height)
+    constructor(){
+        this.width = 16
+        this.height = 64
+        this.blocks = new Uint8Array(this.width * this.width * this.height)
         this.group = new Group()
         scene.add(this.group)
     }
 
     getIndex(x, y, z){
-        return (this.inChunk(x,y,z)) ? z+y*4+x*16 : null
+        return (this.inChunk(x,y,z)) ? z+y*this.height+x*this.width*this.width : null
     }
 
     getPosition(idx){
         let x, y, z
         z = idx
-        idx = idx >> 2
-        z -= idx << 2
+        idx = idx >> 4
+        z -= idx << 4
 
         y = idx
-        idx = idx >> 2
-        y -= idx << 2
+        idx = idx >> 4
+        y -= idx << 4
 
         x = idx
-        idx = idx >> 2 
-        x -= idx << 2
+        idx = idx >> 4
+        x -= idx << 4
         return [x, y, z]
     }
 
     inChunk(...pos){
         let b = true
         for (let x of pos){
-            b = b & ( x>=0 && x<=3 )
+            b = b & ( x>=0 && x<=15 )
         } 
         return b
     }

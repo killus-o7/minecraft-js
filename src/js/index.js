@@ -6,9 +6,6 @@ import Chunk from "./components/Chunk.js";
 // Setting
 import { scene, animate } from "./components/setting.js";
 
-// Texture loader
-const loader = new THREE.TextureLoader();
-
 // Grid 
 const size = 16;
 const grid = new THREE.GridHelper( size, size );

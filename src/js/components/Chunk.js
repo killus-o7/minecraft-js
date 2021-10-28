@@ -1,8 +1,8 @@
-import { Mesh, MeshNormalMaterial, Group } from "../lib/build/three.module.js";
+import { Mesh, MeshNormalMaterial, Group, MeshPhongMaterial, MeshToonMaterial } from "../lib/build/three.module.js";
 import { Cube } from "./blocks/Cube.js";
 import { face_offsets } from "./blocks/cube_consts.js";
 
-import { scene } from "./setting.js";
+import { scene, stone } from "./setting.js";
 
 class Chunk {
     constructor(){
@@ -91,10 +91,10 @@ class Chunk {
     createMesh(x, y, z){
         let index = this.getIndex(x,y,z)
 
-        let option = {}
+        let option = { map: stone, color: 0x999999 }
         //option = { wireframe: true }
 
-        let material = new MeshNormalMaterial(option),
+        let material = new MeshToonMaterial(option),
             mesh = new Mesh(new Cube(this.getFaces(x,y,z)), material)
 
         mesh.position.set(x,y,z)

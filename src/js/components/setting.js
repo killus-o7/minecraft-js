@@ -1,10 +1,17 @@
 import * as THREE from "../lib/build/three.module.js";
+import { FirstPersonControls } from "../lib/examples/jsm/controls/FirstPersonControls.js";
 import { OrbitControls } from "../lib/examples/jsm/controls/OrbitControls.js";
 import Stats from '../lib/examples/jsm/libs/stats.module.js';
 
 //import { EffectComposer } from '../lib/examples/jsm/postprocessing/EffectComposer.js';
 //import { OutlinePass } from '../lib/examples/jsm/postprocessing/OutlinePass.js';
 
+// Texture loader
+const loader = new THREE.TextureLoader();
+let stone = loader.load("./src/texture/stone.png")
+stone.magFilter = THREE.NearestFilter
+// Clock
+const clock = new THREE.Clock();
 
 // Perspective camera
 const aspect = window.innerWidth / window.innerHeight;
@@ -14,7 +21,7 @@ const camera = new THREE.PerspectiveCamera(
 	1, // near plane
 	100 // far plane
 );
-camera.position.set(24, 24, 24);
+camera.position.set(16, 16, 16);
 
 // Scene
 const scene = new THREE.Scene();
@@ -33,18 +40,60 @@ composer.addPass( new OutlinePass())
 const stats = new Stats();
 document.body.appendChild( stats.dom );
 
-// Orbit controls
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.target.set( 7.5, 0, 7.5 );
-controls.update();
-controls.enablePan = false;
-controls.enableDamping = true;
+// First person controls
+const fp_controls = new FirstPersonControls( camera, renderer.domElement );
+fp_controls.movementSpeed = 10;
+fp_controls.domElement = renderer.domElement;
+fp_controls.lookSpeed = 0.1;
 
-function animate() {
-	requestAnimationFrame( animate );
-	controls.update();
-	stats.update();
-	renderer.render( scene, camera );
+// Orbit controls
+const o_controls =  new OrbitControls( camera, renderer.domElement );
+o_controls.target.set(7.5, 0, 7.5)
+o_controls.enableDamping = true
+
+// Raycaster
+const raycaster = new THREE.Raycaster(),
+	  mouse = new THREE.Vector2();
+
+document.addEventListener( 'pointermove', onPointerMove );
+function onPointerMove( event ) {
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+	raycaster.setFromCamera( mouse, camera );
+
+	const intersects = raycaster.intersectObjects( scene.children);
+	for ( let i = 0; i < intersects.length; i ++ ) {
+		intersects[ i ].object.material.color.set( 0xff0000 );
+	}
 }
 
-export { camera, scene, renderer, stats, controls, animate};
+// Window resize
+window.addEventListener( 'resize', onWindowResize );
+
+function animate() {
+	requestAnimationFrame( animate )
+
+	render()
+	stats.update()
+}
+
+function render() {
+	const delta = clock.getDelta();
+
+	o_controls.update( delta );
+	renderer.render( scene, camera )
+}
+
+function onWindowResize() {
+
+	let SCREEN_HEIGHT = window.innerHeight;
+	let SCREEN_WIDTH = window.innerWidth;
+
+	camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+}
+
+export { camera, scene, renderer, stats, animate, loader, stone };

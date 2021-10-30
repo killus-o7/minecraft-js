@@ -10,8 +10,12 @@ import Stats from '../lib/examples/jsm/libs/stats.module.js';
 const loader = new THREE.TextureLoader();
 let stone = loader.load("./src/texture/stone.png")
 stone.magFilter = THREE.NearestFilter
+
 // Clock
 const clock = new THREE.Clock();
+
+// some globals
+let INTERSECTED
 
 // Perspective camera
 const aspect = window.innerWidth / window.innerHeight;
@@ -59,13 +63,6 @@ document.addEventListener( 'pointermove', onPointerMove );
 function onPointerMove( event ) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	raycaster.setFromCamera( mouse, camera );
-
-	const intersects = raycaster.intersectObjects( scene.children);
-	for ( let i = 0; i < intersects.length; i ++ ) {
-		intersects[ i ].object.material.color.set( 0xff0000 );
-	}
 }
 
 // Window resize
@@ -80,6 +77,35 @@ function animate() {
 
 function render() {
 	const delta = clock.getDelta();
+
+	raycaster.setFromCamera( mouse, camera );
+	let intersects = raycaster.intersectObjects( scene.children );
+
+	if ( intersects.length > 0 )
+	{
+		// if the closest object intersected is not the currently stored intersection object
+		if ( intersects[ 0 ].object != INTERSECTED ) 
+		{
+		    // restore previous intersection object (if it exists) to its original color
+			if ( INTERSECTED ) 
+				INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+			// store reference to closest object as current intersection object
+			INTERSECTED = intersects[ 0 ].object;
+			// store color of closest object (for later restoration)
+			INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+			// set a new color for closest object
+			INTERSECTED.material.color.setHex( 0xffff00 );
+		}
+	} 
+	else // there are no intersections
+	{
+		// restore previous intersection object (if it exists) to its original color
+		if ( INTERSECTED ) 
+			INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+		// remove previous intersection object reference
+		//     by setting current intersection object to "nothing"
+		INTERSECTED = null;
+	}
 
 	o_controls.update( delta );
 	renderer.render( scene, camera )

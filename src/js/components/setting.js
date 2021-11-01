@@ -15,7 +15,7 @@ stone.magFilter = THREE.NearestFilter
 const clock = new THREE.Clock();
 
 // some globals
-let INTERSECTED
+let INTERSECTED, FACE;
 
 // Perspective camera
 const aspect = window.innerWidth / window.innerHeight;
@@ -81,30 +81,26 @@ function render() {
 	raycaster.setFromCamera( mouse, camera );
 	let intersects = raycaster.intersectObjects( scene.children );
 
-	if ( intersects.length > 0 )
-	{
-		// if the closest object intersected is not the currently stored intersection object
-		if ( intersects[ 0 ].object != INTERSECTED ) 
-		{
+	if ( intersects.length > 0 ){
+		if ( intersects[ 0 ].object != INTERSECTED ){
 		    // restore previous intersection object (if it exists) to its original color
-			if ( INTERSECTED ) 
-				INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-			// store reference to closest object as current intersection object
-			INTERSECTED = intersects[ 0 ].object;
-			// store color of closest object (for later restoration)
-			INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-			// set a new color for closest object
-			INTERSECTED.material.color.setHex( 0xffff00 );
+			if (INTERSECTED) 
+				INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
+				
+			INTERSECTED = intersects[0].object
+
+			console.group("Look at: ")
+				console.log(INTERSECTED)
+			console.groupEnd()
+
+			INTERSECTED.currentHex = INTERSECTED.material.color.getHex()
+			INTERSECTED.material.color.setHex( 0xcccccc )
 		}
-	} 
-	else // there are no intersections
-	{
-		// restore previous intersection object (if it exists) to its original color
+	} else {
 		if ( INTERSECTED ) 
-			INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-		// remove previous intersection object reference
-		//     by setting current intersection object to "nothing"
-		INTERSECTED = null;
+			INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
+
+		INTERSECTED = null
 	}
 
 	o_controls.update( delta );

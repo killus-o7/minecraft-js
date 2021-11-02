@@ -1,8 +1,9 @@
-import { Mesh, MeshNormalMaterial, Group, MeshPhongMaterial, MeshToonMaterial } from "../lib/build/three.module.js";
-import { Cube } from "./blocks/Cube.js";
-import { face_offsets } from "./blocks/cube_consts.js";
+import { Mesh, MeshNormalMaterial, Group, MeshPhongMaterial, MeshToonMaterial } from "../../lib/build/three.module.js";
+import { Cube } from "../blocks/Cube.js";
+import { World } from "./World.js";
+import { face_offsets } from "../blocks/cube_consts.js";
 
-import { scene, stone } from "./setting.js";
+import { scene, stone } from "../setting.js";
 
 class Chunk {
     constructor(){
@@ -17,7 +18,7 @@ class Chunk {
         return (this.inChunk(x,y,z)) ? z+y*this.height+x*this.width*this.width : null
     }
 
-    getPosition(idx){
+    getLocalPosition(idx){
         let x, y, z
         z = idx
         idx = idx >> 4

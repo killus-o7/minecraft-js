@@ -1,7 +1,7 @@
 import * as THREE from "./lib/build/three.module.js";
 
 import Blocks from "./components/blocks/block_name.js";
-import Chunk from "./components/Chunk.js";
+import Chunk from "./components/world/Chunk.js";
 
 // Setting
 import { scene, animate } from "./components/setting.js";
@@ -28,6 +28,7 @@ chunk.setBlock(1,1,1, Blocks.stone)
 chunk.setBlock(0,2,1, Blocks.stone)
 chunk.setBlock(2,1,3, Blocks.stone)
 chunk.setBlock(3,1,3, Blocks.stone)
+chunk.setBlock(4,1,3, Blocks.stone)
 
 // Light
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);

@@ -1,7 +1,8 @@
-import * as THREE from "../lib/build/three.module.js";
-import { FirstPersonControls } from "../lib/examples/jsm/controls/FirstPersonControls.js";
-import { OrbitControls } from "../lib/examples/jsm/controls/OrbitControls.js";
-import Stats from '../lib/examples/jsm/libs/stats.module.js';
+import * as THREE from "../lib/build/three.module.js"
+import { FirstPersonControls } from "../lib/examples/jsm/controls/FirstPersonControls.js"
+import { OrbitControls } from "../lib/examples/jsm/controls/OrbitControls.js"
+import Stats from '../lib/examples/jsm/libs/stats.module.js'
+import * as POINTER from "./pointer.js"
 
 //import { EffectComposer } from '../lib/examples/jsm/postprocessing/EffectComposer.js';
 //import { OutlinePass } from '../lib/examples/jsm/postprocessing/OutlinePass.js';
@@ -55,15 +56,11 @@ const o_controls =  new OrbitControls( camera, renderer.domElement );
 o_controls.target.set(7.5, 0, 7.5)
 o_controls.enableDamping = true
 
-// Raycaster
-const raycaster = new THREE.Raycaster(),
-	  mouse = new THREE.Vector2();
 
-document.addEventListener( 'pointermove', onPointerMove );
-function onPointerMove( event ) {
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-}
+
+document.addEventListener( 'pointermove', POINTER.mouseMove );
+document.addEventListener( 'pointerdown', POINTER.mouseDown );
+
 
 // Window resize
 window.addEventListener( 'resize', onWindowResize );
@@ -78,30 +75,7 @@ function animate() {
 function render() {
 	const delta = clock.getDelta();
 
-	raycaster.setFromCamera( mouse, camera );
-	let intersects = raycaster.intersectObjects( scene.children );
-
-	if ( intersects.length > 0 ){
-		if ( intersects[ 0 ].object != INTERSECTED ){
-		    // restore previous intersection object (if it exists) to its original color
-			if (INTERSECTED) 
-				INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
-				
-			INTERSECTED = intersects[0].object
-
-			console.group("Look at: ")
-				console.log(INTERSECTED)
-			console.groupEnd()
-
-			INTERSECTED.currentHex = INTERSECTED.material.color.getHex()
-			INTERSECTED.material.color.setHex( 0xcccccc )
-		}
-	} else {
-		if ( INTERSECTED ) 
-			INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
-
-		INTERSECTED = null
-	}
+	
 
 	o_controls.update( delta );
 	renderer.render( scene, camera )

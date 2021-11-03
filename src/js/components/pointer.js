@@ -3,6 +3,7 @@ import { scene, camera } from "./setting.js"
 let INTERSECTED
 let raycaster = new THREE.Raycaster(),
     mouse = new THREE.Vector2()
+import { chunk } from "../index.js";
 
 function mouseMove( event ){
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -16,30 +17,42 @@ function blockHighLight() {
 	let intersects = raycaster.intersectObjects( scene.children );
 
 	if ( intersects.length > 0 ){
-		if ( intersects[ 0 ].object != INTERSECTED ){
+		if ( intersects[ 0 ] != INTERSECTED ){
 		    // restore previous intersection object (if it exists) to its original color
 			if (INTERSECTED) 
-				INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
+				INTERSECTED.object.material.color.setHex( INTERSECTED.currentHex )
 				
-			INTERSECTED = intersects[0].object
+			INTERSECTED = intersects[0]
 
 			console.group("Look at: ")
 				console.log(INTERSECTED)
 			console.groupEnd()
 
-			INTERSECTED.currentHex = INTERSECTED.material.color.getHex()
-			INTERSECTED.material.color.setHex( 0xcccccc )
+			INTERSECTED.currentHex = INTERSECTED.object.material.color.getHex()
+			INTERSECTED.object.material.color.setHex( 0xcccccc )
 		}
 	} else {
 		if ( INTERSECTED ) 
-			INTERSECTED.material.color.setHex( INTERSECTED.currentHex )
+			INTERSECTED.object.material.color.setHex( INTERSECTED.currentHex )
 
 		INTERSECTED = null
 	}
 }
 
 function mouseDown( event ){
+	console.log(event)
+	if (INTERSECTED){
+		let x = INTERSECTED.object.position.x,
+			y = INTERSECTED.object.position.y,
+			z = INTERSECTED.object.position.z
 
+		let off_x = INTERSECTED.face.normal.x, 
+			off_y = INTERSECTED.face.normal.y,
+			off_z = INTERSECTED.face.normal.z
+
+		console.log(x+off_x, y+off_y, z+off_z)
+		chunk.setBlock(x+off_x, y+off_y, z+off_z, 1)
+	}
 }
 
 export { mouseMove, mouseDown }

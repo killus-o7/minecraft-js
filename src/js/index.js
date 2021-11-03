@@ -39,3 +39,4 @@ directionalLight.position.set(10, 20, 0);
 scene.add(directionalLight);
 
 animate()
+export {chunk}

@@ -1,15 +1,14 @@
 import * as THREE from "../lib/build/three.module.js"
 import { scene, camera } from "./setting.js"
+import { chunk } from "../index.js"
+
 let INTERSECTED
 let raycaster = new THREE.Raycaster(),
     mouse = new THREE.Vector2()
-import { chunk } from "../index.js";
 
 function mouseMove( event ){
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	blockHighLight();
 }
 
 function blockHighLight() {
@@ -55,4 +54,4 @@ function mouseDown( event ){
 	}
 }
 
-export { mouseMove, mouseDown }
+export { mouseMove, mouseDown, blockHighLight }

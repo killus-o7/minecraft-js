@@ -57,8 +57,8 @@ class Chunk {
 
             if (blockIndex){
                 if (!this.blocks[blockIndex]) faces.push(i)
-                //else if (this.outOfChunk(ox, oy, oz)) faces.push(i)
-            }
+                
+            } else if (!this.inChunk(ox, oy, oz)) faces.push(i)
             
         }
         console.groupEnd()

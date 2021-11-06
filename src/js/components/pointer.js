@@ -23,10 +23,6 @@ function blockHighLight() {
 				
 			INTERSECTED = intersects[0]
 
-			console.group("Look at: ")
-				console.log(INTERSECTED)
-			console.groupEnd()
-
 			INTERSECTED.currentHex = INTERSECTED.object.material.color.getHex()
 			INTERSECTED.object.material.color.setHex( 0xcccccc )
 		}
@@ -39,7 +35,6 @@ function blockHighLight() {
 }
 
 function mouseDown( event ){
-	console.log(event)
 	if (INTERSECTED){
 		let x = INTERSECTED.object.position.x,
 			y = INTERSECTED.object.position.y,
@@ -49,8 +44,7 @@ function mouseDown( event ){
 			off_y = INTERSECTED.face.normal.y,
 			off_z = INTERSECTED.face.normal.z
 
-		console.log(x+off_x, y+off_y, z+off_z)
-		chunk.setBlock(x+off_x, y+off_y, z+off_z, 1)
+		chunk.setBlock(x+off_x, y+off_y, z+off_z, "dirt")
 	}
 }
 

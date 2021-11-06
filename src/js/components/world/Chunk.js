@@ -3,12 +3,13 @@ import { Cube } from "../blocks/Cube.js";
 import { World } from "./World.js";
 import { face_offsets } from "../blocks/cube_consts.js";
 
-import { scene, stone } from "../setting.js";
+import { scene } from "../setting.js";
+import Blocks from "../blocks/Blocks.js";
 
 class Chunk {
     constructor(){
         this.width = 16
-        this.height = 64
+        this.height = 16
         this.blocks = new Uint8Array(this.width * this.width * this.height)
         this.group = new Group()
         scene.add(this.group)
@@ -31,14 +32,17 @@ class Chunk {
         x = idx
         idx = idx >> 4
         x -= idx << 4
+        console.log([x, y, z])
         return [x, y, z]
     }
 
-    inChunk(...pos){
+    inChunk(x,y,z){
         let b = true
-        for (let x of pos){
-            b = b & ( x>=0 && x<=15 )
-        } 
+        console.log(x,y,z)
+        b = b & ( x>=0 && x<this.width )
+        b = b & ( y>=0 && y<this.height )
+        b = b & ( z>=0 && z<this.width )
+
         return b
     }
 
@@ -46,34 +50,31 @@ class Chunk {
         let faces = [],
             ox, oy, oz
 
-        console.group(`Checking faces for: ${x} ${y} ${z}`)
         for (let [i, v] of face_offsets.entries()){
             ox = x + v[0]
             oy = y + v[1]
             oz = z + v[2]
 
             let blockIndex = this.getIndex(ox, oy, oz)
-            console.log(`index of block at ${ox} ${oy} ${oz}: ${blockIndex}`)
 
             if (blockIndex){
                 if (!this.blocks[blockIndex]) faces.push(i)
-                
+
             } else if (!this.inChunk(ox, oy, oz)) faces.push(i)
             
         }
-        console.groupEnd()
         
         return faces
     }
 
-    setBlock(x, y, z, block_id){
+    setBlock(x, y, z, block_name){
+        if (!this.inChunk(x,y,z)) return
         let index = this.getIndex(x, y, z),
             ox, oy, oz
 
-        this.blocks[index] = block_id
-        this.createMesh(x,y,z)
+        this.blocks[index] = Blocks[block_name].id
+        this.createMesh(x,y,z, block_name)
 
-        console.group(`Checking blocks around: ${x} ${y} ${z}:`)
         for (let offsets of face_offsets){
             ox = x + offsets[0]
             oy = y + offsets[1]
@@ -83,16 +84,14 @@ class Chunk {
             if (blockIndex == null) continue
             if (this.blocks[blockIndex] == 0) continue
 
-            console.log(this.blocks[blockIndex])
             this.updateMesh(ox,oy,oz)
         }
-        console.groupEnd()
     }
 
-    createMesh(x, y, z){
+    createMesh(x, y, z, block_name){
         let index = this.getIndex(x,y,z)
 
-        let option = { map: stone, color: 0x999999 }
+        let option = { map: Blocks[block_name].texture, color: 0x999999 }
         //option = { wireframe: true }
 
         let material = new MeshToonMaterial(option),

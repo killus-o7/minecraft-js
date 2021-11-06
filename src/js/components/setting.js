@@ -7,16 +7,8 @@ import * as POINTER from "./pointer.js"
 //import { EffectComposer } from '../lib/examples/jsm/postprocessing/EffectComposer.js';
 //import { OutlinePass } from '../lib/examples/jsm/postprocessing/OutlinePass.js';
 
-// Texture loader
-const loader = new THREE.TextureLoader();
-let stone = loader.load("./src/texture/stone.png")
-stone.magFilter = THREE.NearestFilter
-
 // Clock
 const clock = new THREE.Clock();
-
-// some globals
-let INTERSECTED, FACE;
 
 // Perspective camera
 const aspect = window.innerWidth / window.innerHeight;
@@ -66,7 +58,7 @@ window.addEventListener( 'resize', onWindowResize );
 function animate() {
 	requestAnimationFrame( animate )
 	POINTER.blockHighLight()
-	
+
 	render()
 	stats.update()
 }
@@ -89,4 +81,4 @@ function onWindowResize() {
 	renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
 }
 
-export { camera, scene, renderer, stats, animate, loader, stone };
+export { camera, scene, renderer, stats, animate };

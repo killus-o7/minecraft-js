@@ -9,14 +9,14 @@ import Blocks from "../blocks/Blocks.js";
 class Chunk {
     constructor(){
         this.width = 16
-        this.height = 16
+        this.height = 256
         this.blocks = new Uint8Array(this.width * this.width * this.height)
         this.group = new Group()
         scene.add(this.group)
     }
 
     getIndex(x, y, z){
-        return (this.inChunk(x,y,z)) ? z+y*this.height+x*this.width*this.width : null
+        return (this.inChunk(x,y,z)) ? z+x*this.width+y*this.height : null
     }
 
     getLocalPosition(idx){
@@ -25,20 +25,20 @@ class Chunk {
         idx = idx >> 4
         z -= idx << 4
 
-        y = idx
-        idx = idx >> 4
-        y -= idx << 4
-
         x = idx
         idx = idx >> 4
         x -= idx << 4
-        console.log([x, y, z])
+
+        y = idx
+        idx = idx >> 8
+        y -= idx << 8
+        
         return [x, y, z]
     }
 
     inChunk(x,y,z){
         let b = true
-        console.log(x,y,z)
+        //console.log(x,y,z)
         b = b & ( x>=0 && x<this.width )
         b = b & ( y>=0 && y<this.height )
         b = b & ( z>=0 && z<this.width )
@@ -72,6 +72,7 @@ class Chunk {
         let index = this.getIndex(x, y, z),
             ox, oy, oz
 
+        console.log([x,y,z])
         this.blocks[index] = Blocks[block_name].id
         this.createMesh(x,y,z, block_name)
 

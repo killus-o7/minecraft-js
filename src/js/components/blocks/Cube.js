@@ -25,6 +25,7 @@ function Cube(faceIdx) {
     geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
 
     let indexes = []
+    
     for (let face of faceIdx){
         indexes.push(...faces[face]);
     } geometry.setIndex( indexes );

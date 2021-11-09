@@ -48,8 +48,8 @@ const o_controls =  new OrbitControls( camera, renderer.domElement );
 o_controls.target.set(7.5, 0, 7.5)
 o_controls.enableDamping = true
 
-document.addEventListener( 'pointermove', POINTER.mouseMove );
-document.addEventListener( 'pointerdown', POINTER.mouseDown );
+//document.addEventListener( 'pointermove', POINTER.mouseMove );
+//document.addEventListener( 'pointerdown', POINTER.mouseDown );
 
 
 // Window resize
@@ -57,7 +57,7 @@ window.addEventListener( 'resize', onWindowResize );
 
 function animate() {
 	requestAnimationFrame( animate )
-	POINTER.blockHighLight()
+	//POINTER.blockHighLight()
 
 	render()
 	stats.update()

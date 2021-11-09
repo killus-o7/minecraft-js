@@ -16,7 +16,9 @@ class Chunk {
      * @param {*} pos 
      */
     constructor(pos){
+        console.log(pos)
         this.chunkPos = pos
+        console.log(this.chunkPos)
         this.corPos = { x: pos.x*16, z: pos.z*16 }
 
         this.width = 16
@@ -24,24 +26,8 @@ class Chunk {
         this.blocks = new Uint8Array(this.width * this.width * this.height)
         this.group = new Group()
         scene.add(this.group)
-
-        let simplexNoise = new SimplexNoise({random: ()=> .43 })
-        let y=0
-        for (let xi=0; xi<16; xi++){
-            for (let zi=0; zi<16; zi++){
-                let x = xi+pos.x*16,
-                    z = zi+pos.z*16,
-                    y = simplexNoise.noise(x/16,z/16)
-                y+=1; y/=2; y*=16;
-                y = Math.round(y)
-                //console.log(y)
-
-                for (let yi=y; yi>-1; yi--){
-                    console.log(x%16,yi,z%16)
-                    this.setBlock(x%16,yi,z%16, "stone")
-                }
-            }
-        }
+        
+        this.generateTerrain()
     }
 
     /**
@@ -178,6 +164,26 @@ class Chunk {
         this.group.add(mesh)
     }
 
+    generateTerrain(){
+        let simplexNoise = new SimplexNoise({random: ()=> .43 })
+        let x,y,z=0
+        for (let xi=0; xi<16; xi++){
+            for (let zi=0; zi<16; zi++){
+                x = xi+this.corPos.x
+                z = zi+this.corPos.z
+                //console.log(x,z)
+                y = simplexNoise.noise(x,z)
+                y+=1; y/=2; y*=16;
+                y = Math.round(y)
+
+                for (let yi=y; yi>-1; yi--){
+                    //console.log(x%16,yi,z%16)
+                    this.setBlock(x%16,yi,z%16, "stone")
+                }
+            }
+        }
+    }
+
     /**
      * updates mesh which is already deployed on scene
      * @param {*} x 
@@ -188,7 +194,9 @@ class Chunk {
         let index = this.getIndex(x,y,z)
         let mesh = this.group.getObjectByName(`${index}`)
 
-        mesh.geometry = new Cube(this.getFaces(x,y,z))
+        let faces = this.getFaces(x,y,z)
+        if (faces.length == 0) mesh.visible = false
+        mesh.geometry = new Cube(faces)
         mesh.updateMatrix()
     }
 }

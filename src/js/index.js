@@ -2,19 +2,13 @@ import * as THREE from "./lib/build/three.module.js";
 
 import { world } from "./components/world/World.js"
 import Blocks from "./components/blocks/Blocks.js";
-import Chunk from "./components/world/Chunk.js";
-
-// Setting
 import { scene, animate } from "./components/setting.js";
 
-// Grid 
-const size = 16;
-const grid = new THREE.GridHelper( size, size );
-grid.position.set(7.5, -1, 7.5)
-scene.add( grid );
-
-// Chunks (test)
-//let chunk = new Chunk({x: 0, z: 0})
+/*
+accualy this file have no use if i move everything from it, 
+only thing that will remains will be "import world from "..."" or setting which is already index v2
+because it have all thing that original index had.
+*/
 
 // Light
 const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);

@@ -7,7 +7,14 @@ import { face_offsets } from "../blocks/cube_consts.js";
 import { scene } from "../setting.js";
 import Blocks from "../blocks/Blocks.js";
 
+/**
+ * creates chunk object, which is elementary container that stores block information
+ */
 class Chunk {
+    /**
+     * @constructor
+     * @param {*} pos 
+     */
     constructor(pos){
         this.chunkPos = pos
         this.corPos = { x: pos.x*16, z: pos.z*16 }
@@ -37,10 +44,24 @@ class Chunk {
         }
     }
 
+    /**
+     * function gives an index of given block coordinates
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @returns {number|null} 
+     *  returns index of block at given coordinates or null if it's "out of chunk"
+     *  meaning that its out of specified width or height
+     */
     getIndex(x, y, z){
         return (this.inChunk(x,y,z)) ? z+x*this.width+y*this.height : null
     }
 
+    /**
+     * function gives a coordinates of given index 
+     * @param {number} idx 
+     * @returns returns an array of coordinates of given index block
+     */
     getLocalPosition(idx){
         let x, y, z
         z = idx
@@ -58,16 +79,31 @@ class Chunk {
         return [x, y, z]
     }
 
+    /**
+     * function checks if given coordinates are in a chunk (<0,15> for x,z and <0,255> for y)
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @returns {boolean}
+     */
     inChunk(x,y,z){
         let b = true
         //console.log(x,y,z)
         b = b & ( x>=0 && x<this.width )
-        b = b & ( y>=0 && y<this.height )
+        b = b & ( y>=0 && y<this.height)
         b = b & ( z>=0 && z<this.width )
 
         return b
     }
 
+    /**
+     * This function returns an array with numbers for Cube constructor. It checks every
+     * block around the given one and if it not air (0) it gives and index of that face 
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     * @returns {Array<number>} returns an Array with face indexes
+     */
     getFaces(x,y,z){
         let faces = [],
             ox, oy, oz
@@ -89,6 +125,14 @@ class Chunk {
         return faces
     }
 
+    /**
+     * Creates an block in this.blocks and this.group. It automaticly updates blocks around
+     * to not create block faces inside blocks
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     * @param {*} block_name 
+     */
     setBlock(x, y, z, block_name){
         if (!this.inChunk(x,y,z)) return
         let index = this.getIndex(x, y, z),
@@ -111,6 +155,13 @@ class Chunk {
         }
     }
 
+    /**
+     * Creates mesh and adds it to this.group, nothing more
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     * @param {*} block_name 
+     */
     createMesh(x, y, z, block_name){
         let index = this.getIndex(x,y,z)
 
@@ -127,6 +178,12 @@ class Chunk {
         this.group.add(mesh)
     }
 
+    /**
+     * updates mesh which is already deployed on scene
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     */
     updateMesh(x, y, z){
         let index = this.getIndex(x,y,z)
         let mesh = this.group.getObjectByName(`${index}`)

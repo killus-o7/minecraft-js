@@ -1,6 +1,6 @@
 import * as THREE from "../lib/build/three.module.js"
 import { scene, camera } from "./setting.js"
-import { chunk } from "../index.js"
+import { world } from "./world/World.js"
 
 let INTERSECTED
 let raycaster = new THREE.Raycaster(),
@@ -44,7 +44,7 @@ function mouseDown( event ){
 			off_y = INTERSECTED.face.normal.y,
 			off_z = INTERSECTED.face.normal.z
 
-		chunk.setBlock(x+off_x, y+off_y, z+off_z, "dirt")
+		//chunk.setBlock(x+off_x, y+off_y, z+off_z, "dirt")
 	}
 }
 

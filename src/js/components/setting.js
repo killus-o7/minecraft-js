@@ -15,8 +15,8 @@ const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.PerspectiveCamera(
 	45, // field of view in degrees
 	aspect, // aspect ratio
-	1, // near plane
-	100 // far plane
+	0.1, // near plane
+	1000 // far plane
 );
 camera.position.set(16, 16, 16);
 
@@ -24,8 +24,9 @@ camera.position.set(16, 16, 16);
 const scene = new THREE.Scene();
 
 // Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer(/*{ antialias: true }*/);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio)
 document.body.appendChild(renderer.domElement);
 
 /* // Effects

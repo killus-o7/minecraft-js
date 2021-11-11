@@ -1,30 +1,38 @@
 import * as THREE from "../../lib/build/three.module.js"
-let load_txt = (name) => {
+
+let loader = new THREE.TextureLoader();
+let create_material = (name) => {
     let texture = loader.load(`./src/texture/${name}.png`)
     texture.magFilter = THREE.NearestFilter
-    return texture
+
+    let material = new THREE.MeshToonMaterial({ 
+        map: texture,
+        color: 0x666666
+    })
+
+    return material
 }
 
-const loader = new THREE.TextureLoader();
+
 const Blocks = {
     stone: { 
         id: 1,
-        texture: load_txt("stone")
+        material: create_material("stone")
     },
 
     dirt: { 
         id: 2,
-        texture: load_txt("dirt")
+        material: create_material("dirt")
     },
 
     grass_block: { 
         id: 3,
-        texture: load_txt("grass_block")
+        material: create_material("stone")
     },
 
     wood: { 
         id: 1,
-        texture: load_txt("stone")
+        material: create_material("stone")
     },
 }
 

@@ -126,7 +126,7 @@ class Chunk {
 
         //console.log([x,y,z])
         this.blocks[index] = Blocks[block_name].id
-        this.createMesh(x,y,z, block_name)
+        this.createMesh(x%16,y,z%16, block_name)
 
         for (let offsets of face_offsets){
             ox = x + offsets[0]
@@ -149,39 +149,13 @@ class Chunk {
      * @param {*} block_name 
      */
     createMesh(x, y, z, block_name){
-        let index = this.getIndex(x,y,z)
+        let index = this.getIndex(x%16,y,z%16)
 
-        let option = { 
-            map: Blocks[block_name].texture,
-            color: 0x999999 
-        }
-
-        let material = new MeshToonMaterial(option),
-            mesh = new Mesh(new Cube(this.getFaces(x,y,z)), material)
+        let mesh = new Mesh(new Cube(this.getFaces(x,y,z)), Blocks["stone"].material)
 
         mesh.position.set(x+this.corPos.x,y,z+this.corPos.z)
         mesh.name = `${index}`
         this.group.add(mesh)
-    }
-
-    generateTerrain(){
-        let simplexNoise = new SimplexNoise({random: ()=> .43 })
-        let x,y,z=0
-        for (let xi=0; xi<16; xi++){
-            for (let zi=0; zi<16; zi++){
-                x = xi+this.corPos.x
-                z = zi+this.corPos.z
-                //console.log(x,z)
-                y = simplexNoise.noise(x,z)
-                y+=1; y/=2; y*=16;
-                y = Math.round(y)
-
-                for (let yi=y; yi>-1; yi--){
-                    //console.log(x%16,yi,z%16)
-                    this.setBlock(x%16,yi,z%16, "stone")
-                }
-            }
-        }
     }
 
     /**
@@ -198,6 +172,31 @@ class Chunk {
         if (faces.length == 0) mesh.visible = false
         mesh.geometry = new Cube(faces)
         mesh.updateMatrix()
+    }
+
+    generateTerrain(){
+        let simplexNoise = new SimplexNoise({random: ()=> .4292})
+        let x,y,z=0
+        for (let xi=0; xi<16; xi++){
+            for (let zi=0; zi<16; zi++){
+                x = xi+this.corPos.x
+                z = zi+this.corPos.z
+                console.log(x,z)
+                y = simplexNoise.noise(x/32,z/32)
+
+                y+=1; 
+
+                y/=2; 
+                y*=8;
+                y = Math.round(y)
+                this.setBlock(5, 15, 5, "dirt")
+                console.log(y)
+                for (let yi=y; yi>-1; yi--){
+                    //console.log(x,yi,z)
+                    this.setBlock(xi,yi,zi, "stone")
+                }
+            }
+        }
     }
 }
 
